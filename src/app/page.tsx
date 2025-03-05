@@ -7,7 +7,7 @@ const statsData = [
   { title: 'Total User', value: 1200 },
   { title: 'Total Room', value: 50 },
   { title: 'Total Booking', value: 350 },
-  { title: 'Total Transaction', value: 300 },
+  { title: 'Total Transaction' },
 ];
 
 // Data dummy untuk chart
@@ -44,7 +44,7 @@ export default function Home() {
         {statsData.map((stat, index) => (
           <div key={index} className="bg-white p-6 rounded-lg shadow-md">
             <h2 className="text-lg font-semibold text-gray-700">{stat.title}</h2>
-            <p className="text-2xl font-bold text-gray-900">{stat.value}</p>
+            <p className="text-2xl font-bold text-gray-900">{stat?.value ?? '-'}</p>
           </div>
         ))}
       </div>
