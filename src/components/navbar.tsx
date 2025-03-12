@@ -30,7 +30,7 @@ export default function Navbar() {
                 <Link href="/users" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                   User
                 </Link>
-                <Link href="/room" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                <Link href="/rooms" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                   Room
                 </Link>
                 {/* Dropdown untuk Transaction */}
