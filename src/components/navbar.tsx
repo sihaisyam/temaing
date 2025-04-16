@@ -1,10 +1,11 @@
-'use client';
-import Link from 'next/link';
-import { useState } from 'react';
+"use client";
+import Link from "next/link";
+import { useState } from "react";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isAccountDropdownOpen, setIsAccountDropdownOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
@@ -12,6 +13,14 @@ export default function Navbar() {
 
   const toggleAccountDropdown = () => {
     setIsAccountDropdownOpen(!isAccountDropdownOpen);
+  };
+
+  const login = () => {
+    setIsLoggedIn(true);
+  };
+
+  const logout = () => {
+    setIsLoggedIn(false);
   };
 
   return (
@@ -24,6 +33,7 @@ export default function Navbar() {
             <div className="hidden md:block">
               <div className="ml-10 flex items-baseline space-x-4">
                 {/* Menu Utama */}
+                {isLoggedIn ? ( <>
                 <Link href="/" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
                   Dashboard
                 </Link>
@@ -35,10 +45,7 @@ export default function Navbar() {
                 </Link>
                 {/* Dropdown untuk Transaction */}
                 <div className="relative">
-                  <button
-                    onClick={toggleDropdown}
-                    className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium focus:outline-none"
-                  >
+                  <button onClick={toggleDropdown} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium focus:outline-none">
                     Transaction
                   </button>
                   {isDropdownOpen && (
@@ -49,38 +56,60 @@ export default function Navbar() {
                     </div>
                   )}
                 </div>
+                </>
+                ):(
+                <>
+                <Link href="/" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                  Blog
+                </Link>
+                <Link href="/" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                  About
+                </Link>
+                <Link href="/" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                  Contact
+                </Link>
+                </>
+                )}
               </div>
             </div>
           </div>
 
           {/* Dropdown Account (Rata Kanan) */}
           <div className="flex items-center">
-            <div className="relative">
-              <button
-                onClick={toggleAccountDropdown}
-                className="flex items-center text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium focus:outline-none"
-              >
-                <img
-                  src="https://fastly.picsum.photos/id/5/5000/3334.jpg?hmac=R_jZuyT1jbcfBlpKFxAb0Q3lof9oJ0kREaxsYV3MgCc" // Ganti dengan URL gambar profil Anda
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full mr-2"
-                />
-                <span>Account</span>
-              </button>
-              {isAccountDropdownOpen && (
-                <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg">
-                  <Link href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    Profile
-                  </Link>
-                  <Link href="/change-password" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                    Change Password
-                  </Link>
-                  <Link href="/logout" className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
-                    Log Out
-                  </Link>
-                </div>
-              )}
-            </div>
+            {isLoggedIn ? (
+              <div className="relative">
+                <button onClick={toggleAccountDropdown} className="flex items-center text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium focus:outline-none">
+                  <img
+                    src="https://fastly.picsum.photos/id/5/5000/3334.jpg?hmac=R_jZuyT1jbcfBlpKFxAb0Q3lof9oJ0kREaxsYV3MgCc" // Ganti dengan URL gambar profil Anda
+                    alt="Profile"
+                    className="w-8 h-8 rounded-full mr-2"
+                  />
+                  <span>Account</span>
+                </button>
+                {isAccountDropdownOpen && (
+                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg">
+                    <Link href="/profile" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Profile
+                    </Link>
+                    <Link href="/change-password" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      Change Password
+                    </Link>
+                    <Link href="/" onClick={logout} className="block px-4 py-2 text-sm text-red-600 hover:bg-gray-100">
+                      Log Out
+                    </Link>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <>
+                <Link href="/" className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                  Register
+                </Link>
+                <Link href="/dashboard"  onClick={login} className="text-gray-300 hover:bg-gray-700 hover:text-white px-3 py-2 rounded-md text-sm font-medium">
+                  Masuk
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </div>
