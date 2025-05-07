@@ -96,5 +96,6 @@ export default function Home() {
           </ResponsiveContainer>
         </div>
     </div>
+  </div>
   );
 }
