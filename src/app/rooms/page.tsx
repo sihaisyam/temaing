@@ -18,6 +18,7 @@ export default function RoomPage() {
   const [sortBy, setSortBy] = useState("id");
   const [sortOrder, setSortOrder] = useState("asc");
   const [page, setPage] = useState(1);
+  const [roomId, setRoomId] = useState(0);
   const [name, setName] = useState("");
   const [categoryId, setCategoryId] = useState(0);
   const [price, setPrice] = useState(0);
@@ -52,13 +53,12 @@ export default function RoomPage() {
   const handleSubmit = async () => {
     try {
       const payload = {
-        "name": name,
-        "categoryId": categoryId,
-        "price": price,
-        "capacity": capacity,
-        "description": desc
-     }
-     
+        name: name,
+        categoryId: categoryId,
+        price: price,
+        capacity: capacity,
+        description: desc,
+      };
 
       const response = await fetch("https://simaru.amisbudi.cloud/api/rooms", {
         method: "POST",
@@ -66,17 +66,52 @@ export default function RoomPage() {
           "Content-Type": "application/json",
           Authorization: "Bearer " + accessToken,
         },
-        body: JSON.stringify(payload)
+        body: JSON.stringify(payload),
       });
       const { data, message } = await response.json();
       console.log(data);
       if (data) {
-        setMessage(message)
-        setRoomName(data.name)
-        setIsSuccess(true)
-        setIsOpen(false)
-        handleGet()
-        setTimeout(() => setIsSuccess(false), 5000)
+        setMessage(message);
+        setRoomName(data.name);
+        setIsSuccess(true);
+        setIsOpen(false);
+        handleGet();
+        setTimeout(() => setIsSuccess(false), 5000);
+      }
+    } catch (err) {
+      // setError('An error occurred. Please try again.');
+    } finally {
+      // setIsLoading(false);
+    }
+  };
+
+  const handleUpdate = async () => {
+    try {
+      const payload = {
+        name: name,
+        categoryId: categoryId,
+        price: price,
+        capacity: capacity,
+        description: desc,
+      };
+
+      const response = await fetch(`https://simaru.amisbudi.cloud/api/rooms/${roomId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: "Bearer " + accessToken,
+        },
+        body: JSON.stringify(payload),
+      });
+      const { data, message } = await response.json();
+      console.log(data);
+      if (data) {
+        setMessage(message);
+        setRoomName(data.name);
+        setIsSuccess(true);
+        setIsEdit(false);
+        handleGet();
+        setTimeout(() => setIsSuccess(false), 5000);
       }
     } catch (err) {
       // setError('An error occurred. Please try again.');
@@ -86,9 +121,23 @@ export default function RoomPage() {
   };
 
   const [isOpen, setIsOpen] = useState(false);
+  const [isEdit, setIsEdit] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const actionModal = () => {
     setIsOpen(!isOpen);
+  };
+  const actionModalEdit = () => {
+    setIsEdit(!isEdit);
+  };
+
+  const actionEdit = (room: Room) => {
+    console.log(room)
+    setIsEdit(true);
+    setRoomId(room.id);
+    setName(room.name);
+    setCategoryId(room.categoryId);
+    setCapacity(room.capacity);
+    setDesc(room.description);
   };
 
   useEffect(() => {
@@ -146,9 +195,9 @@ export default function RoomPage() {
           </svg>
           <span className="sr-only">Info</span>
           <div className="ms-3 text-sm font-medium">
-           Your data
+            Your data
             <span className="font-semibold underline hover:no-underline">
-             {roomName}
+              {roomName}
             </span>
             has been saved. {message}.
           </div>
@@ -251,7 +300,7 @@ export default function RoomPage() {
                     </div>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
+                    <div>
                       <label
                         htmlFor="price"
                         className="block text-sm font-medium text-gray-700"
@@ -314,7 +363,159 @@ export default function RoomPage() {
                   <button
                     type="button"
                     onClick={handleSubmit}
-                    className="text-white ms-3 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                    className="text-white ms-3 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  >
+                    Simpan
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isEdit && (
+        <div
+          id="default-modal"
+          className="fixed top-0 left-0 right-0 z-50 flex justify-center items-center w-full h-full bg-gray-900 bg-opacity-50"
+        >
+          <div className="relative p-4 w-full max-w-2xl max-h-full">
+            <div className="relative bg-white rounded-lg shadow-sm dark:bg-gray-700">
+              <div className="flex items-center justify-between p-4 md:p-5 border-b rounded-t dark:border-gray-600 border-gray-200">
+                <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+                  Edit Data
+                </h3>
+                <button
+                  type="button"
+                  onClick={actionModalEdit}
+                  className="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                >
+                  <svg
+                    className="w-3 h-3"
+                    aria-hidden="true"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 14 14"
+                  >
+                    <path
+                      stroke="currentColor"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"
+                    />
+                  </svg>
+                  <span className="sr-only">Close modal</span>
+                </button>
+              </div>
+              <form className="space-y-4">
+                <div className="p-4 md:p-5 space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label
+                        htmlFor="name"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Name
+                      </label>
+                      <input
+                        type="text"
+                        id="name"
+                        name="name"
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="category"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Category
+                      </label>
+                      <input
+                        type="text"
+                        value={categoryId}
+                        onChange={(e) => setCategoryId(+e.target.value)}
+                        id="category"
+                        name="category"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label
+                        htmlFor="price"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Price
+                      </label>
+                      <input
+                        type="text"
+                        value={price}
+                        onChange={(e) => setPrice(+e.target.value)}
+                        id="price"
+                        name="price"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="capacity"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Capacity
+                      </label>
+                      <input
+                        type="text"
+                        value={capacity}
+                        onChange={(e) => setCapacity(+e.target.value)}
+                        id="capacity"
+                        name="capacity"
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 gap-4">
+                    <div>
+                      <label
+                        htmlFor="description"
+                        className="block text-sm font-medium text-gray-700"
+                      >
+                        Description
+                      </label>
+                      <input
+                        type="text"
+                        value={desc}
+                        id="description"
+                        name="description"
+                        onChange={(e) => setDesc(e.target.value)}
+                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div className="flex items-center justify-end p-4 md:p-5 border-t border-gray-200 rounded-b dark:border-gray-600">
+                  <button
+                    onClick={actionModalEdit}
+                    className="py-2.5 px-5  text-sm font-medium text-gray-900 focus:outline-none bg-white rounded-lg border border-gray-200 hover:bg-gray-100 hover:text-blue-700 focus:z-10 focus:ring-4 focus:ring-gray-100 dark:focus:ring-gray-700 dark:bg-gray-800 dark:text-gray-400 dark:border-gray-600 dark:hover:text-white dark:hover:bg-gray-700"
+                  >
+                    Kembali
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleUpdate}
+                    className="text-white ms-3 bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  >
                     Simpan
                   </button>
                 </div>
@@ -386,6 +587,9 @@ export default function RoomPage() {
                   Status{" "}
                   {sortBy === "status" ? (sortOrder === "asc" ? "↑" : "↓") : ""}
                 </th>
+                <th className="border p-2 cursor-pointer text-center">
+                  Action
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -395,6 +599,19 @@ export default function RoomPage() {
                   <td className="border p-2">{item.name}</td>
                   <td className="border p-2">{item.capacity}</td>
                   <td className="border p-2">{item.status}</td>
+                  <td className="border p-2 flex justify-center gap-2">
+                    <button
+                      onClick={()=> actionEdit(item)}
+                      className="bg-yellow-600 hover:bg-yellow-400 text-white px-4 py-2 rounded-md"
+                    >
+                      Edit
+                    </button>
+                    <button
+                      className="bg-red-600 hover:bg-red-400 text-white px-4 py-2 rounded-md"
+                    >
+                      Delete
+                    </button>
+                  </td>
                 </tr>
               ))}
             </tbody>
